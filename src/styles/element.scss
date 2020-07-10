@@ -1,0 +1,59 @@
+// h1, h2, h3, h4, h5, h6{
+//   margin: 0;
+// }
+body{
+    margin: 0;
+}
+
+div {
+    box-sizing: border-box;
+}
+
+button{
+    box-sizing: border-box;
+    border: none;
+    outline: none;
+    font-size: inherit;
+}
+
+label{
+    display: block;
+}
+
+title{
+    display: block;
+}
+
+ul{
+    padding: 0;
+    margin: 0;
+}
+li{
+    list-style-type: none;
+}
+p{
+    margin: 0;
+}
+
+input,textarea{
+    box-sizing: border-box;
+    border: none;
+    outline: none;
+    -webkit-appearance: none;  /* 取消 iOS 的内阴影 */
+    -webkit-tap-highlight-color: transparent;
+    font-size: inherit;
+    padding: 0;
+    margin: 0;
+}
+input::placeholder{
+    line-height: normal;  /* input的 placeholder 垂直居中 */
+    font-size: inherit;
+}
+
+pre{
+  border-radius: 6px;
+}
+
+img{
+  max-width: 100%;
+}
