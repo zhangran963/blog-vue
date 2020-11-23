@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const MFS = require('memory-fs');
+const MFS = require('memory-fs'); /* A simple in-memory filesystem. Holds data in a javascript object. */
 const webpack = require('webpack');
 const chokidar = require('chokidar');
 const clientConfig = require('./webpack.client.config');
@@ -16,17 +16,19 @@ const readFile = (fs, file) => {
  * 开发模式时, server.js的拓展
  * @param {any} app 服务器对象
  * @param {string} templatePath 模板路径
- * @param {function} cb 回调函数
+ * @param {function} cb 回调函数, 能生成新的渲染器
  */
 module.exports = function setupDevServer(app, templatePath, cb) {
 	let bundle;
-	let template;
+	let template; /* 模板内容 */
 	let clientManifest;
 
+  /* 创建Promise对象, 把resolve方法保存在外面 */
 	let ready;
 	const readyPromise = new Promise((r) => {
 		ready = r;
-	});
+  });
+  
 	const update = () => {
 		if (bundle && clientManifest) {
 			ready();
@@ -37,15 +39,17 @@ module.exports = function setupDevServer(app, templatePath, cb) {
 		}
 	};
 
-	// read template from disk and watch
-	template = fs.readFileSync(templatePath, 'utf-8');
+	/* 读取页面模板 */
+  template = fs.readFileSync(templatePath, 'utf-8');
+  /* chokidar替换fs.watch */
+  /* 监听: template.html模板的更改 */
 	chokidar.watch(templatePath).on('change', () => {
 		template = fs.readFileSync(templatePath, 'utf-8');
-		console.log('index.html template updated.');
+		console.log('template模板更新了');
 		update();
 	});
 
-	// modify client config to work with hot middleware
+  /* 更新webpack配置, 以适配 hot middleware */
 	clientConfig.entry.app = ['webpack-hot-middleware/client', clientConfig.entry.app];
 	clientConfig.output.filename = '[name].js';
 	clientConfig.plugins.push(new webpack.HotModuleReplacementPlugin(), new webpack.NoEmitOnErrorsPlugin());
@@ -72,7 +76,8 @@ module.exports = function setupDevServer(app, templatePath, cb) {
 	app.use(require('webpack-hot-middleware')(clientCompiler, { heartbeat: 5000 }));
 
 	// watch and update server renderer
-	const serverCompiler = webpack(serverConfig);
+  const serverCompiler = webpack(serverConfig);
+  /* 内存中的文件系统, 用object存储数据 */
 	const mfs = new MFS();
 	serverCompiler.outputFileSystem = mfs;
 	serverCompiler.watch({}, (err, stats) => {

@@ -20,6 +20,10 @@ const app = express();
 
 /**
  * 生成渲染器
+ * @param {json} bundle 服务端json文件
+ * @param {object} options 配置
+ * @param {string} options.template 模板内容
+ * @param {json} options.clientManifest 客户端json文件
  */
 function createRenderer(bundle, options) {
 	return createBundleRenderer(
@@ -105,15 +109,15 @@ function render(req, res) {
       <meta name="theme-color" content="#4285f4">
     `,
 		url: req.url,
-  };
+	};
 
 	// 这里无需传入一个应用程序，因为在执行 bundle 时已经自动创建过。
 	// 现在我们的服务器与应用程序已经解耦！
 	renderer.renderToString(context, (err, html) => {
 		if (err) {
 			return handleError(err);
-    }
-    
+		}
+
 		res.send(html);
 		if (true) {
 			console.log(`响应: ${new Date().toISOString().replace(/[a-z]/gi, ' ')} ${req.url} | ${Date.now() - s}ms`);
@@ -131,14 +135,12 @@ app.get(
 		  }
 );
 
-
 app.set('port', process.env.PORT || 9999);
 let hostname = '0.0.0.0';
 app.listen(app.get('port'), hostname, () => {
 	console.log(`Server running at http://${hostname}:${app.get('port')}`);
 });
 
-
 process.on('unhandledRejection', (e) => {
-  console.log(e)
-})
+	console.log(e);
+});
